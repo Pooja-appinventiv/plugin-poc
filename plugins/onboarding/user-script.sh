@@ -1,8 +1,8 @@
 #!/bin/bash
-
+echo "start user script file"
 # Define variables
-module_dir="../../plugins/onboarding/users" 
-destination_dir="../../src/users"
+module_dir="../plugins/onboarding/users" 
+destination_dir="../src/users"
 package_json="../../package.json"
 app_module="../../src/app.module.ts"
 

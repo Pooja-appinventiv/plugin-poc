@@ -1,21 +1,30 @@
-
-
 #!/bin/bash
 
-# Function to extract folder from Google Drive link and copy it to plugins directory
-extract_and_copy_to_plugins() {
-    # Extract Google Drive ID from the link
-    drive_id=$(echo "$1" | awk -F "[=/]" '/(\/|id=)/{print $NF}')
+# Array of Google Drive File IDs of the zip files
+FILE_IDS=("1bSszBB38pddvkv6DknzIvwTQlL-YyUQY" "1_lNCKB5VK_RsLvHgI0RycH9BSNYGNTM4")
 
-    # Download the folder as a zip file
-    curl -L "https://drive.google.com/uc?id=${drive_id}" -o "${drive_id}.zip"
+# Array of URLs to download the zip files
+URLS=("https://drive.google.com/uc?export=download&id=${FILE_IDS[0]}" "https://drive.google.com/uc?export=download&id=${FILE_IDS[1]}")
 
-    # Extract the zip file
-    unzip "${drive_id}.zip" -d extracted_folder
+# Array of local file names to save the downloaded zip files
+ZIP_FILES=("file1.zip" "file2.zip")
 
-    # Move the extracted folder to the plugins directory
-    mv extracted_folder /home/admin96/Videos/abhinavsir-poc/plugin-poc/plugins/download
-}
+# Array of destination directories where you want to extract the contents
+DEST_DIRS=("../plugins" "../plugins")
 
-# Example usage: Pass the Google Drive link as an argument to the script
-extract_and_copy_to_plugins "https://drive.google.com/file/d/1bSszBB38pddvkv6DknzIvwTQlL-YyUQY"
+# Loop through each zip file
+for ((i=0; i<${#FILE_IDS[@]}; i++)); do
+    FILE_ID="${FILE_IDS[$i]}"
+    URL="${URLS[$i]}"
+    ZIP_FILE="${ZIP_FILES[$i]}"
+    DEST_DIR="${DEST_DIRS[$i]}"
+    
+    # Download the zip file from Google Drive
+    curl -L -o "$ZIP_FILE" "$URL"
+
+    # Extract the contents of the zip file, overwriting existing files
+    unzip -o -q "$ZIP_FILE" -d "$DEST_DIR"
+
+    # Optionally, remove the downloaded zip file
+    rm "$ZIP_FILE"
+done
